@@ -1,17 +1,30 @@
 import { View, Text, FlatList, Image, RefreshControl } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+// CUSTOM HOOKS
+import { getAllPosts, getLatestVideos } from "../../lib/appwrite";
+import useAppwrite from "../../lib/useAppwrite";
+
+// COMPONENTS
 import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
 import EmpytState from "../../components/EmpytState";
+import VideoCard from "../../components/VideoCard";
 
+// ASSETS
 import { images } from "../../constants";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
 
+  const { data: posts, refetch } = useAppwrite(getAllPosts);
+  const { data: latestPosts } = useAppwrite(getLatestVideos);
+
   const onRefresh = async () => {
     setRefreshing(true);
+
+    await refetch();
 
     setRefreshing(false);
   };
@@ -19,13 +32,9 @@ const Home = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
+        data={posts}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item, index }) => (
-          <Text key={index} className="text-3xl text-white">
-            {item.id}
-          </Text>
-        )}
+        renderItem={({ item }) => <VideoCard key={item.$id} item={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
             <View className="justify-between items-start flex-row mb-6">
@@ -53,7 +62,7 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3 ">
                 Trending Videos
               </Text>
-              <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} />
+              <Trending posts={latestPosts ?? []} />
             </View>
           </View>
         )}
