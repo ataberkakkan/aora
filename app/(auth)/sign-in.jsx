@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { Link, useRouter } from "expo-router";
-import { signIn } from "../../lib/appwrite";
+import { getCurrentUser, signIn } from "../../lib/appwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 
@@ -16,6 +17,8 @@ import { images } from "../../constants";
 
 const SignIn = () => {
   const router = useRouter();
+
+  const { setUser, setIsLoggedIn } = useGlobalContext();
 
   const [form, setForm] = useState({
     email: "",
@@ -33,6 +36,11 @@ const SignIn = () => {
 
     try {
       await signIn(form.email, form.password);
+
+      const result = await getCurrentUser();
+
+      setUser(result);
+      setIsLoggedIn(true);
 
       router.replace("/home");
     } catch (error) {

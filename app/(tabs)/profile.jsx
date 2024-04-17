@@ -1,10 +1,11 @@
 import { View, FlatList, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 // CUSTOM HOOKS
-import { getUserPosts } from "../../lib/appwrite";
-import useAppwrite from "../../lib/useAppwrite";
+import { getUserPosts, signOut } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import useAppwrite from "../../lib/useAppwrite";
 
 // COMPONENTS
 import EmpytState from "../../components/EmpytState";
@@ -15,11 +16,18 @@ import InfoBox from "../../components/InfoBox";
 import { icons } from "../../constants";
 
 const Profile = () => {
+  const router = useRouter();
+
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
 
   const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
 
-  const logout = () => {};
+  const logout = async () => {
+    await signOut();
+    setUser(null);
+    setIsLoggedIn(false);
+    router.replace("/sign-in");
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -42,14 +50,14 @@ const Profile = () => {
 
             <View className="w-16 h-16 border border-secondary rounded-lg justify-center items-center">
               <Image
-                source={{ uri: user.avatar }}
+                source={{ uri: user?.avatar }}
                 className="w-[90%] h-[90%] rounded-lg"
                 resizeMode="cover"
               />
             </View>
 
             <InfoBox
-              title={user.username}
+              title={user?.username}
               containerStyles="mt-5"
               titleStyles="text-lg"
             />

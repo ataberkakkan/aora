@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // CUSTOM HOOKS
 import { getAllPosts, getLatestVideos } from "../../lib/appwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 import useAppwrite from "../../lib/useAppwrite";
 
 // COMPONENTS
@@ -17,6 +18,8 @@ import { images } from "../../constants";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
+
+  const { user } = useGlobalContext();
 
   const { data: posts, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestVideos);
@@ -40,10 +43,10 @@ const Home = () => {
             <View className="justify-between items-start flex-row mb-6">
               <View>
                 <Text className="font-pmedium text-sm text-gray-100">
-                  Welcome Back
+                  Welcome Back,
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  Ataberk Akkan
+                  {user?.username}
                 </Text>
               </View>
 

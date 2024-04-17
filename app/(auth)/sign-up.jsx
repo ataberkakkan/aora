@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { Link, useRouter } from "expo-router";
 import { createUser } from "../../lib/appwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 
@@ -16,6 +17,8 @@ import { images } from "../../constants";
 
 const SignUp = () => {
   const router = useRouter();
+
+  const { setUser, setIsLoggedIn } = useGlobalContext();
 
   const [form, setForm] = useState({
     username: "",
@@ -34,6 +37,9 @@ const SignUp = () => {
 
     try {
       const result = await createUser(form.email, form.password, form.username);
+
+      setUser(result);
+      setIsLoggedIn(true);
 
       router.replace("/home");
     } catch (error) {
