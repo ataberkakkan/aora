@@ -1,8 +1,8 @@
 import { View, Text, Image } from "react-native";
+import { useRouter } from "expo-router";
 import CustomButton from "./CustomButton";
 
 import { images } from "../constants";
-import { useRouter } from "expo-router";
 
 const EmpytState = ({ title, subtitle }) => {
   const router = useRouter();
